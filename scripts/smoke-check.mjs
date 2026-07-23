@@ -129,6 +129,31 @@ if (
 }
 results.push({ interaction: "Google Forms enquiry embed", passed: true });
 
+const mapEmbed = contactPage.getByTitle(
+  "Sri School of Arts location on Google Maps"
+);
+if (!(await mapEmbed.isVisible())) {
+  throw new Error("Google Maps location embed is not visible");
+}
+const mapEmbedSource = await mapEmbed.getAttribute("src");
+if (
+  !mapEmbedSource?.startsWith("https://www.google.com/maps/embed?pb=") ||
+  !mapEmbedSource.includes("SRI%20SCHOOL%20OF%20ARTS")
+) {
+  throw new Error(`Unexpected Google Maps embed: ${mapEmbedSource}`);
+}
+results.push({ interaction: "Google Maps location embed", passed: true });
+const directionsLink = contactPage.getByRole("link", {
+  name: "Get directions"
+});
+const directionsSource = await directionsLink.getAttribute("href");
+if (
+  directionsSource !==
+  "https://www.google.com/maps/dir/?api=1&destination=11.457126428321008%2C77.43991021002283"
+) {
+  throw new Error(`Unexpected Google Maps directions link: ${directionsSource}`);
+}
+
 if (checkExternalForm) {
   await enquiryForm.scrollIntoViewIfNeeded();
   const googleFormResponse = await Promise.race([

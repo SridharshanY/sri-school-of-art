@@ -55,8 +55,8 @@ export default function Footer() {
           <Link href="/contact/" className="footer-contact-row">
             <MapPin size={18} aria-hidden="true" />
             <span>
-              Chennai, Tamil Nadu
-              <small>Full studio address to be confirmed</small>
+              Location pinned on Google Maps
+              <small>Full street address to be confirmed</small>
             </span>
           </Link>
           <a

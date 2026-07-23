@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import ContactForm from "@/components/ContactForm";
+import GoogleMapEmbed from "@/components/GoogleMapEmbed";
 import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/contact";
 
 export const metadata = {
@@ -23,8 +24,8 @@ const contactItems = [
   {
     icon: MapPin,
     label: "Studio location",
-    value: "Chennai, Tamil Nadu",
-    note: "Full street address to be confirmed",
+    value: "Location pinned below",
+    note: "Open the map for directions",
     tone: "yellow"
   },
   {
@@ -87,8 +88,9 @@ export default function ContactPage() {
             })}
           </div>
           <p className="content-disclaimer">
-            The WhatsApp number is connected. Add the school’s verified phone,
-            email and full street address before publishing.
+            The WhatsApp number and map link are connected. Add the
+            school’s verified phone, email and full street address before
+            publishing.
           </p>
         </div>
       </section>
@@ -106,16 +108,7 @@ export default function ContactPage() {
             <ContactForm />
           </div>
           <div className="contact-side">
-            <div className="map-placeholder map-placeholder-large" aria-label="Map placeholder">
-              <div className="map-grid" aria-hidden="true" />
-              <span className="map-pin">
-                <MapPin size={26} fill="currentColor" aria-hidden="true" />
-              </span>
-              <div className="map-card">
-                <strong>Sri School of Art</strong>
-                <span>Connect the verified Google Maps location here</span>
-              </div>
-            </div>
+            <GoogleMapEmbed large />
             <div className="hours-card">
               <div className="hours-heading">
                 <Clock3 size={22} aria-hidden="true" />

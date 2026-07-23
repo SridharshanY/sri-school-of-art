@@ -22,6 +22,7 @@ import SectionHeader from "@/components/SectionHeader";
 import CourseCard from "@/components/CourseCard";
 import EventCard from "@/components/EventCard";
 import GalleryGrid from "@/components/GalleryGrid";
+import GoogleMapEmbed from "@/components/GoogleMapEmbed";
 import TrialForm from "@/components/TrialForm";
 import {
   classCategories,
@@ -399,16 +400,16 @@ export default function HomePage() {
             <p className="eyebrow">Visit our creative space</p>
             <h2>Come by. Look around. Make yourself at home.</h2>
             <p>
-              We’re preparing studio contact details for launch. Until then,
-              send a trial request and the school can follow up with the right
-              class information.
+              The studio location is pinned below. Send a trial request and
+              the school can follow up with the right class information and
+              visit details.
             </p>
             <div className="contact-preview-meta">
               <span>
                 <MapPin size={20} aria-hidden="true" />
                 <span>
                   <small>Location</small>
-                  Chennai, Tamil Nadu
+                  View the map pin
                 </span>
               </span>
               <span>
@@ -423,16 +424,7 @@ export default function HomePage() {
               See contact options <ArrowRight size={18} aria-hidden="true" />
             </Link>
           </div>
-          <div className="map-placeholder" aria-label="Map placeholder">
-            <div className="map-grid" aria-hidden="true" />
-            <span className="map-pin">
-              <MapPin size={24} fill="currentColor" aria-hidden="true" />
-            </span>
-            <div className="map-card">
-              <strong>Sri School of Art</strong>
-              <span>Full address & map pin to be added</span>
-            </div>
-          </div>
+          <GoogleMapEmbed />
         </div>
       </section>
     </main>

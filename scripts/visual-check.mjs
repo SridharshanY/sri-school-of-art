@@ -24,6 +24,14 @@ const checks = [
     width: 390,
     height: 844,
     selector: ".contact-form-panel"
+  },
+  {
+    name: "home-map-mobile",
+    url: "/",
+    width: 390,
+    height: 844,
+    selector: ".google-map",
+    settleMs: 3000
   }
 ];
 
@@ -43,7 +51,12 @@ for (const check of checks) {
   });
   const screenshotPath = path.join(outputDir, `${check.name}.png`);
   if (check.selector) {
-    await page.locator(check.selector).screenshot({ path: screenshotPath });
+    const target = page.locator(check.selector);
+    await target.scrollIntoViewIfNeeded();
+    if (check.settleMs) {
+      await page.waitForTimeout(check.settleMs);
+    }
+    await target.screenshot({ path: screenshotPath });
   } else {
     await page.screenshot({ path: screenshotPath, fullPage: false });
   }

@@ -1,0 +1,12 @@
+.next/
+out/
+node_modules/
+.DS_Store
+*.log
+.qa/
+.edge-headless/
+.edge-mobile/
+home-desktop.png
+home-mobile.png
+.env*
+!.env.example

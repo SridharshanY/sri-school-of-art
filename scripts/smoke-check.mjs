@@ -54,6 +54,12 @@ await checkRoute("/", { width: 1440, height: 1000 });
 
 const menuPage = await browser.newPage({ viewport: { width: 390, height: 844 } });
 await menuPage.goto(baseURL, { waitUntil: "networkidle" });
+const floatingWhatsApp = await menuPage
+  .locator(".floating-whatsapp")
+  .getAttribute("href");
+if (!floatingWhatsApp?.startsWith("https://wa.me/919976146493")) {
+  throw new Error(`Unexpected floating WhatsApp link: ${floatingWhatsApp}`);
+}
 await menuPage.locator(".menu-button").click();
 if (!(await menuPage.locator(".mobile-panel.open").isVisible())) {
   throw new Error("Mobile menu did not open");
@@ -61,6 +67,7 @@ if (!(await menuPage.locator(".mobile-panel.open").isVisible())) {
 await menuPage.locator(".mobile-nav a", { hasText: "Classes" }).click();
 await menuPage.waitForURL("**/classes/");
 results.push({ interaction: "mobile navigation", passed: true });
+results.push({ interaction: "WhatsApp number link", passed: true });
 await menuPage.close();
 
 const classPage = await browser.newPage({ viewport: { width: 1280, height: 900 } });
@@ -116,6 +123,17 @@ await registrationPage
 await registrationPage.getByRole("button", { name: "Send registration request" }).click();
 if (!(await registrationPage.locator(".form-success").isVisible())) {
   throw new Error("Registration confirmation did not appear");
+}
+const registrationWhatsApp = await registrationPage
+  .getByRole("link", { name: "Continue on WhatsApp" })
+  .getAttribute("href");
+if (
+  !registrationWhatsApp?.startsWith("https://wa.me/919976146493") ||
+  !registrationWhatsApp.includes("Test%20Learner")
+) {
+  throw new Error(
+    `Registration WhatsApp handoff is incorrect: ${registrationWhatsApp}`
+  );
 }
 results.push({ interaction: "registration confirmation", passed: true });
 await registrationPage.close();

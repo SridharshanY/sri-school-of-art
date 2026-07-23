@@ -4,9 +4,10 @@ import {
   Camera,
   UsersRound,
   Play,
-  Mail,
+  MessageCircle,
   MapPin
 } from "lucide-react";
+import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/contact";
 
 export default function Footer() {
   return (
@@ -58,13 +59,18 @@ export default function Footer() {
               <small>Full studio address to be confirmed</small>
             </span>
           </Link>
-          <Link href="/contact/" className="footer-contact-row">
-            <Mail size={18} aria-hidden="true" />
+          <a
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="footer-contact-row"
+          >
+            <MessageCircle size={18} aria-hidden="true" />
             <span>
-              Contact the school
-              <small>Email and phone to be confirmed</small>
+              WhatsApp the school
+              <small>{WHATSAPP_DISPLAY}</small>
             </span>
-          </Link>
+          </a>
           <Link className="footer-big-link" href="/registration/">
             Request a trial <ArrowUpRight aria-hidden="true" />
           </Link>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, MessageCircle } from "lucide-react";
+import { WHATSAPP_URL } from "@/lib/contact";
 
 export default function ContactForm() {
   const [sent, setSent] = useState(false);
@@ -12,9 +13,17 @@ export default function ContactForm() {
         <CheckCircle2 size={34} aria-hidden="true" />
         <h3>Your message is ready.</h3>
         <p>
-          This website preview does not send messages yet. Add the school’s
-          email or form service before launch.
+          The website form endpoint is not connected yet. You can send the
+          enquiry directly to the school on WhatsApp.
         </p>
+        <a
+          className="btn btn-dark"
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <MessageCircle size={18} aria-hidden="true" /> Continue on WhatsApp
+        </a>
         <button className="text-link button-link" type="button" onClick={() => setSent(false)}>
           Edit message
         </button>

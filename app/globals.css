@@ -2893,6 +2893,12 @@ p {
   line-height: 1.5;
 }
 
+.whatsapp-note a {
+  border-bottom: 1px solid currentColor;
+  color: #285e40;
+  font-weight: 800;
+}
+
 .registration-form-wrap {
   padding: 38px;
   border: 1px solid var(--line);
@@ -3001,6 +3007,17 @@ p {
   background: var(--white);
 }
 
+a.contact-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+a.contact-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-5px);
+}
+
 .contact-card > svg {
   margin-bottom: 44px;
   color: var(--tone);
@@ -3062,6 +3079,10 @@ p {
 .compact-success > svg {
   margin-bottom: 22px;
   color: #487f5d;
+}
+
+.compact-success .button-link {
+  margin-top: 18px;
 }
 
 .contact-side {

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import ContactForm from "@/components/ContactForm";
+import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/contact";
 
 export const metadata = {
   title: "Contact",
@@ -36,10 +37,11 @@ const contactItems = [
   {
     icon: MessageCircle,
     label: "WhatsApp",
-    value: "Number to be added",
-    note: "Add a verified WhatsApp Business link",
+    value: WHATSAPP_DISPLAY,
+    note: "Tap to start a WhatsApp conversation",
     tone: "mint",
-    id: "whatsapp"
+    id: "whatsapp",
+    href: WHATSAPP_URL
   },
   {
     icon: Mail,
@@ -65,23 +67,28 @@ export default function ContactPage() {
       <section className="section contact-options" id="page-content">
         <div className="container">
           <div className="contact-card-grid">
-            {contactItems.map((item) => (
-              <article
+            {contactItems.map((item) => {
+              const Card = item.href ? "a" : "article";
+              return (
+              <Card
                 className={`contact-card tone-${item.tone}`}
                 key={item.label}
                 id={item.id}
+                href={item.href}
+                target={item.href ? "_blank" : undefined}
+                rel={item.href ? "noreferrer" : undefined}
               >
                 <item.icon size={24} aria-hidden="true" />
                 <small>{item.label}</small>
                 <strong>{item.value}</strong>
                 <span>{item.note}</span>
-              </article>
-            ))}
+              </Card>
+              );
+            })}
           </div>
           <p className="content-disclaimer">
-            Contact details are intentionally left unverified in this first
-            version. Add the school’s real phone, WhatsApp, email and full
-            address before publishing.
+            The WhatsApp number is connected. Add the school’s verified phone,
+            email and full street address before publishing.
           </p>
         </div>
       </section>

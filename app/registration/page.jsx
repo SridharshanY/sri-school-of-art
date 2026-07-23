@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import TrialForm from "@/components/TrialForm";
+import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/contact";
 
 export const metadata = {
   title: "Registration",
@@ -74,8 +75,11 @@ export default function RegistrationPage() {
               <div>
                 <strong>Prefer WhatsApp?</strong>
                 <p>
-                  Add the school’s WhatsApp number before launch to enable a
-                  pre-filled direct handoff.
+                  Send a direct message to{" "}
+                  <a href={WHATSAPP_URL} target="_blank" rel="noreferrer">
+                    {WHATSAPP_DISPLAY}
+                  </a>
+                  .
                 </p>
               </div>
             </div>

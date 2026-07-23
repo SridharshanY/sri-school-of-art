@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2, MessageCircle } from "lucide-react";
 import { classes, events } from "@/lib/data";
+import { createWhatsAppUrl } from "@/lib/contact";
 
 const initialShort = {
   studentName: "",
@@ -67,6 +67,30 @@ export default function TrialForm({ variant = "short" }) {
     setSubmitted(true);
   }
 
+  const message = full
+    ? [
+        "Hello Sri School of Art, I’d like to request a class.",
+        `Student: ${values.studentName}`,
+        `Age: ${values.age}`,
+        values.guardianName ? `Parent/guardian: ${values.guardianName}` : "",
+        values.email ? `Email: ${values.email}` : "",
+        `Class: ${values.selectedClass}`,
+        `Preferred batch: ${values.preferredBatch}`,
+        `Mode: ${values.mode}`,
+        `Experience: ${values.experience}`,
+        values.message ? `Message: ${values.message}` : ""
+      ]
+        .filter(Boolean)
+        .join("\n")
+    : [
+        "Hello Sri School of Art, I’d like to request a trial class.",
+        `Name: ${values.studentName}`,
+        `Age group: ${values.ageGroup}`,
+        `Interest: ${values.interest}`,
+        `Mode: ${values.mode}`
+      ].join("\n");
+  const whatsappLink = createWhatsAppUrl(message);
+
   if (submitted) {
     return (
       <div className="form-success" role="status" aria-live="polite">
@@ -76,8 +100,8 @@ export default function TrialForm({ variant = "short" }) {
         <p className="eyebrow">Request prepared</p>
         <h3>Thank you, {values.studentName.split(" ")[0] || "artist"}!</h3>
         <p>
-          Your trial-class details look good. This preview does not send data yet;
-          connect the school’s form endpoint or WhatsApp number before launch.
+          Your details are ready. Continue on WhatsApp to send this request
+          directly to Sri School of Art.
         </p>
         <div className="success-actions">
           <button
@@ -87,9 +111,14 @@ export default function TrialForm({ variant = "short" }) {
           >
             Edit request
           </button>
-          <Link className="btn btn-outline" href="/contact/#whatsapp">
-            <MessageCircle size={18} aria-hidden="true" /> Contact options
-          </Link>
+          <a
+            className="btn btn-outline"
+            href={whatsappLink}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <MessageCircle size={18} aria-hidden="true" /> Continue on WhatsApp
+          </a>
         </div>
       </div>
     );

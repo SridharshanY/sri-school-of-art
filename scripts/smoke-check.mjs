@@ -2,7 +2,10 @@ import { chromium } from "playwright-core";
 
 const browserPath =
   "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
-const baseURL = "http://127.0.0.1:3000";
+const baseURL = "http://localhost:3000";
+const checkExternalForm = process.argv.includes("--external");
+const googleFormPath =
+  "/forms/d/e/1FAIpQLSdplyiycVzvKNsoa24rAN3w3vqr_RQl5srWJSif3hY0qvnGZg/viewform";
 const routes = [
   "/",
   "/about/",
@@ -96,6 +99,70 @@ if (await galleryPage.locator(".lightbox").isVisible()) {
 }
 results.push({ interaction: "gallery lightbox keyboard close", passed: true });
 await galleryPage.close();
+
+const contactPage = await browser.newPage({
+  viewport: { width: 390, height: 844 }
+});
+let resolveGoogleFormResponse;
+const googleFormResponsePromise = new Promise((resolve) => {
+  resolveGoogleFormResponse = resolve;
+});
+contactPage.on("response", (response) => {
+  if (
+    response.url().includes(googleFormPath) &&
+    response.request().resourceType() === "document"
+  ) {
+    resolveGoogleFormResponse(response);
+  }
+});
+await contactPage.goto(`${baseURL}/contact/`, { waitUntil: "networkidle" });
+const enquiryForm = contactPage.getByTitle("Sri School of Art enquiry form");
+if (!(await enquiryForm.isVisible())) {
+  throw new Error("Google Forms enquiry embed is not visible");
+}
+const enquiryFormSource = await enquiryForm.getAttribute("src");
+if (
+  enquiryFormSource !==
+  "https://docs.google.com/forms/d/e/1FAIpQLSdplyiycVzvKNsoa24rAN3w3vqr_RQl5srWJSif3hY0qvnGZg/viewform?embedded=true"
+) {
+  throw new Error(`Unexpected Google Forms embed: ${enquiryFormSource}`);
+}
+results.push({ interaction: "Google Forms enquiry embed", passed: true });
+
+if (checkExternalForm) {
+  await enquiryForm.scrollIntoViewIfNeeded();
+  const googleFormResponse = await Promise.race([
+    googleFormResponsePromise,
+    new Promise((resolve) => setTimeout(() => resolve(null), 15000))
+  ]);
+  if (!googleFormResponse) {
+    throw new Error("Google Forms embed did not return a document response");
+  }
+  if (googleFormResponse.status() >= 400) {
+    throw new Error(
+      `Google Forms embed returned HTTP ${googleFormResponse.status()}`
+    );
+  }
+
+  const googleFormFrame = contactPage
+    .frames()
+    .find((frame) => frame.url().includes(googleFormPath));
+  const googleFormText = googleFormFrame
+    ? (await googleFormFrame.locator("body").innerText()).toLowerCase()
+    : "";
+  if (
+    !googleFormText ||
+    googleFormText.includes("you must sign in to access this content") ||
+    googleFormText.includes("you need access")
+  ) {
+    throw new Error("Google Forms embed is not publicly usable");
+  }
+  results.push({
+    interaction: "public Google Forms availability",
+    passed: true
+  });
+}
+await contactPage.close();
 
 const registrationPage = await browser.newPage({
   viewport: { width: 1280, height: 900 }

@@ -99,8 +99,9 @@ export default function ContactPage() {
             <p className="eyebrow">Send an enquiry</p>
             <h2>Tell us how we can help.</h2>
             <p>
-              Share a few details and the school can respond with the right
-              class, timing or workshop information.
+              Complete the form below. Your response is recorded in the
+              school&apos;s Google Form so the team can follow up with the
+              right class, timing or workshop information.
             </p>
             <ContactForm />
           </div>

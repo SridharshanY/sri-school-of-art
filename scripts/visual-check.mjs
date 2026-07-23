@@ -17,7 +17,14 @@ const checks = [
   { name: "home-desktop", url: "/", width: 1440, height: 1100 },
   { name: "home-mobile", url: "/", width: 390, height: 844 },
   { name: "classes-mobile", url: "/classes/", width: 390, height: 844 },
-  { name: "gallery-desktop", url: "/gallery/", width: 1440, height: 1000 }
+  { name: "gallery-desktop", url: "/gallery/", width: 1440, height: 1000 },
+  {
+    name: "contact-form-mobile",
+    url: "/contact/",
+    width: 390,
+    height: 844,
+    selector: ".contact-form-panel"
+  }
 ];
 
 for (const check of checks) {
@@ -31,13 +38,15 @@ for (const check of checks) {
   });
   page.on("pageerror", (error) => errors.push(error.message));
 
-  await page.goto(`http://127.0.0.1:3000${check.url}`, {
+  await page.goto(`http://localhost:3000${check.url}`, {
     waitUntil: "networkidle"
   });
-  await page.screenshot({
-    path: path.join(outputDir, `${check.name}.png`),
-    fullPage: false
-  });
+  const screenshotPath = path.join(outputDir, `${check.name}.png`);
+  if (check.selector) {
+    await page.locator(check.selector).screenshot({ path: screenshotPath });
+  } else {
+    await page.screenshot({ path: screenshotPath, fullPage: false });
+  }
 
   const metrics = await page.evaluate(() => ({
     viewport: document.documentElement.clientWidth,

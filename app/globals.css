@@ -1829,23 +1829,20 @@ p {
   box-shadow: var(--shadow-md);
 }
 
-.trial-form .form-grid,
-.contact-form .form-grid {
+.trial-form .form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
 }
 
-.trial-form label,
-.contact-form label {
+.trial-form label {
   display: flex;
   min-width: 0;
   flex-direction: column;
   gap: 7px;
 }
 
-.trial-form label > span,
-.contact-form label > span {
+.trial-form label > span {
   color: var(--ink);
   font-size: 0.68rem;
   font-weight: 800;
@@ -1858,9 +1855,6 @@ p {
 .trial-form input,
 .trial-form select,
 .trial-form textarea,
-.contact-form input,
-.contact-form select,
-.contact-form textarea,
 .age-filter select {
   width: 100%;
   min-height: 48px;
@@ -1875,17 +1869,13 @@ p {
     box-shadow 0.2s ease;
 }
 
-.trial-form textarea,
-.contact-form textarea {
+.trial-form textarea {
   resize: vertical;
 }
 
 .trial-form input:focus,
 .trial-form select:focus,
-.trial-form textarea:focus,
-.contact-form input:focus,
-.contact-form select:focus,
-.contact-form textarea:focus {
+.trial-form textarea:focus {
   border-color: var(--purple);
   box-shadow: 0 0 0 3px rgba(118, 86, 168, 0.12);
 }
@@ -3070,19 +3060,34 @@ a.contact-card:hover {
   margin-bottom: 31px;
 }
 
-.compact-success {
-  min-height: 380px;
-  align-items: center;
+.google-form-shell {
+  overflow: hidden;
+  border: 1px solid rgba(41, 37, 33, 0.1);
+  border-radius: 18px;
+  background: #f5f1eb;
+}
+
+.google-form-embed {
+  display: block;
+  width: 100%;
+  min-height: 1160px;
+  border: 0;
+  background: #f5f1eb;
+}
+
+.google-form-fallback {
+  margin: 0;
+  padding: 14px 18px 16px;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
   text-align: center;
 }
 
-.compact-success > svg {
-  margin-bottom: 22px;
-  color: #487f5d;
-}
-
-.compact-success .button-link {
-  margin-top: 18px;
+.google-form-fallback a {
+  color: var(--purple);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .contact-side {
@@ -4144,8 +4149,7 @@ a.contact-card:hover {
     border-radius: var(--radius);
   }
 
-  .trial-form .form-grid,
-  .contact-form .form-grid {
+  .trial-form .form-grid {
     grid-template-columns: 1fr;
   }
 

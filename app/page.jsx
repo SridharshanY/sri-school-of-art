@@ -73,7 +73,7 @@ export default function HomePage() {
               <span aria-hidden="true">✦</span> Art classes for every age and stage
             </p>
             <h1>
-              Discover your <em>inner artist.</em>
+              Discover your <em>creativity.</em>
             </h1>
             <p className="hero-lede">
               Creativity has no age limit. Explore drawing, painting and crafts

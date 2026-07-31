@@ -13,7 +13,8 @@ const routes = [
   "/gallery/",
   "/workshops/",
   "/registration/",
-  "/contact/"
+  "/contact/",
+  "/admin/"
 ];
 const results = [];
 
@@ -32,10 +33,16 @@ async function checkRoute(route, viewport) {
   const response = await page.goto(`${baseURL}${route}`, {
     waitUntil: "networkidle"
   });
-  const dimensions = await page.evaluate(() => ({
-    viewport: document.documentElement.clientWidth,
-    scrollWidth: document.documentElement.scrollWidth
-  }));
+  const dimensions = await page.evaluate(() => {
+    const viewport = document.documentElement.clientWidth;
+    const pageRoot = document.documentElement.classList.contains("admin-document")
+      ? document.body
+      : document.documentElement;
+    return {
+      viewport,
+      scrollWidth: pageRoot.scrollWidth
+    };
+  });
   const result = {
     route,
     viewport: `${viewport.width}x${viewport.height}`,
@@ -229,6 +236,53 @@ if (
 }
 results.push({ interaction: "registration confirmation", passed: true });
 await registrationPage.close();
+
+const adminPage = await browser.newPage({
+  viewport: { width: 1440, height: 1000 }
+});
+await adminPage.goto(`${baseURL}/admin/`, { waitUntil: "networkidle" });
+if (
+  (await adminPage.locator("header.site-header").count()) !== 0 ||
+  (await adminPage.locator(".floating-whatsapp").count()) !== 0
+) {
+  throw new Error("Public website chrome is visible inside the admin portal");
+}
+await adminPage.getByRole("button", { name: /^Classes/ }).click();
+if (!(await adminPage.getByRole("heading", { name: "6 classes" }).isVisible())) {
+  throw new Error("Admin classes view did not open");
+}
+await adminPage.getByRole("button", { name: "Add class" }).click();
+if (!(await adminPage.getByRole("heading", { name: "7 classes" }).isVisible())) {
+  throw new Error("Admin placeholder class was not added");
+}
+if (!(await adminPage.getByText("Draft class added for this demo session.").isVisible())) {
+  throw new Error("Admin demo action confirmation did not appear");
+}
+results.push({ interaction: "admin class management demo", passed: true });
+await adminPage.close();
+
+const adminMobilePage = await browser.newPage({
+  viewport: { width: 390, height: 844 }
+});
+await adminMobilePage.goto(`${baseURL}/admin/`, { waitUntil: "networkidle" });
+await adminMobilePage.getByRole("button", { name: "Open admin navigation" }).click();
+if (
+  !(await adminMobilePage
+    .getByRole("navigation", { name: "Admin sections" })
+    .isVisible())
+) {
+  throw new Error("Admin mobile navigation did not open");
+}
+await adminMobilePage.getByRole("button", { name: /^Gallery/ }).click();
+if (
+  !(await adminMobilePage
+    .getByRole("heading", { name: "Gallery", exact: true })
+    .isVisible())
+) {
+  throw new Error("Admin mobile navigation did not change sections");
+}
+results.push({ interaction: "admin mobile navigation", passed: true });
+await adminMobilePage.close();
 
 await browser.close();
 

@@ -1,7 +1,5 @@
 import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import FloatingWhatsApp from "@/components/FloatingWhatsApp";
+import SiteShell from "@/components/SiteShell";
 
 export const metadata = {
   title: {
@@ -36,13 +34,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <body>
-        <a className="skip-link" href="#main-content">
-          Skip to content
-        </a>
-        <Header />
-        {children}
-        <Footer />
-        <FloatingWhatsApp />
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   );

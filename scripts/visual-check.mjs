@@ -32,6 +32,18 @@ const checks = [
     height: 844,
     selector: ".google-map",
     settleMs: 3000
+  },
+  {
+    name: "admin-desktop",
+    url: "/admin/",
+    width: 1440,
+    height: 1000
+  },
+  {
+    name: "admin-mobile",
+    url: "/admin/",
+    width: 390,
+    height: 844
   }
 ];
 

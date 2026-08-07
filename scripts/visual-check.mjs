@@ -34,14 +34,14 @@ const checks = [
     settleMs: 3000
   },
   {
-    name: "admin-desktop",
-    url: "/admin/",
+    name: "admin-login-desktop",
+    url: "/admin/login/",
     width: 1440,
     height: 1000
   },
   {
-    name: "admin-mobile",
-    url: "/admin/",
+    name: "admin-login-mobile",
+    url: "/admin/login/",
     width: 390,
     height: 844
   }

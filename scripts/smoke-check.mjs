@@ -247,42 +247,46 @@ if (
 ) {
   throw new Error("Public website chrome is visible inside the admin portal");
 }
-await adminPage.getByRole("button", { name: /^Classes/ }).click();
-if (!(await adminPage.getByRole("heading", { name: "6 classes" }).isVisible())) {
-  throw new Error("Admin classes view did not open");
+if (
+  !(await adminPage
+    .getByRole("heading", { name: "Welcome back." })
+    .isVisible()) ||
+  !(await adminPage.getByLabel("Email address").isVisible()) ||
+  !(await adminPage.getByLabel("Password").isVisible())
+) {
+  throw new Error("Protected admin route did not show the login screen");
 }
-await adminPage.getByRole("button", { name: "Add class" }).click();
-if (!(await adminPage.getByRole("heading", { name: "7 classes" }).isVisible())) {
-  throw new Error("Admin placeholder class was not added");
-}
-if (!(await adminPage.getByText("Draft class added for this demo session.").isVisible())) {
-  throw new Error("Admin demo action confirmation did not appear");
-}
-results.push({ interaction: "admin class management demo", passed: true });
+results.push({ interaction: "admin route authentication guard", passed: true });
 await adminPage.close();
 
 const adminMobilePage = await browser.newPage({
   viewport: { width: 390, height: 844 }
 });
-await adminMobilePage.goto(`${baseURL}/admin/`, { waitUntil: "networkidle" });
-await adminMobilePage.getByRole("button", { name: "Open admin navigation" }).click();
-if (
-  !(await adminMobilePage
-    .getByRole("navigation", { name: "Admin sections" })
-    .isVisible())
-) {
-  throw new Error("Admin mobile navigation did not open");
+await adminMobilePage.goto(`${baseURL}/admin/login/`, {
+  waitUntil: "networkidle"
+});
+if (!(await adminMobilePage.getByRole("button", { name: "Sign in to admin" }).isVisible())) {
+  throw new Error("Admin mobile login form is not usable");
 }
-await adminMobilePage.getByRole("button", { name: /^Gallery/ }).click();
-if (
-  !(await adminMobilePage
-    .getByRole("heading", { name: "Gallery", exact: true })
-    .isVisible())
-) {
-  throw new Error("Admin mobile navigation did not change sections");
-}
-results.push({ interaction: "admin mobile navigation", passed: true });
+results.push({ interaction: "admin mobile login", passed: true });
 await adminMobilePage.close();
+
+const apiPage = await browser.newPage();
+const healthResponse = await apiPage.request.get(`${baseURL}/api/health/`);
+const healthBody = await healthResponse.json();
+if (healthResponse.status() !== 200 || healthBody.status !== "ok") {
+  throw new Error(`API health check failed: ${JSON.stringify(healthBody)}`);
+}
+const sessionResponse = await apiPage.request.get(
+  `${baseURL}/api/admin/session/`
+);
+if (![401, 503].includes(sessionResponse.status())) {
+  throw new Error(
+    `Unauthenticated admin session returned ${sessionResponse.status()}`
+  );
+}
+results.push({ interaction: "API health and session guards", passed: true });
+await apiPage.close();
 
 await browser.close();
 

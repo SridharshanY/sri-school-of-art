@@ -16,6 +16,7 @@ import {
   Image,
   Inbox,
   LayoutDashboard,
+  LogOut,
   Megaphone,
   Menu,
   MessageSquareQuote,
@@ -1113,6 +1114,12 @@ export default function AdminPortal() {
               <small>Demo account</small>
             </div>
           </div>
+          <form action="/auth/signout/" method="post">
+            <button className={styles.signOutButton} type="submit">
+              <LogOut size={17} aria-hidden="true" />
+              Sign out
+            </button>
+          </form>
         </div>
       </aside>
 

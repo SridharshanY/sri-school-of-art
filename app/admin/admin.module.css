@@ -1278,3 +1278,15 @@
     transition: none;
   }
 }
+
+.inlineEmpty { padding: 28px; text-align: center; color: #746d78; }
+.editorBackdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; background: rgba(35, 29, 39, .66); }
+.editorModal { width: min(820px, 100%); max-height: 92vh; overflow: auto; border-radius: 22px; background: #fff; box-shadow: 0 30px 80px rgba(20, 12, 24, .3); }
+.editorHeading { display: flex; justify-content: space-between; align-items: center; padding: 22px 24px; border-bottom: 1px solid #eee6dc; }
+.editorHeading h2 { margin: 3px 0 0; }
+.classEditorForm { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; padding: 24px; }
+.classEditorForm label { display: grid; gap: 7px; font-size: .8rem; font-weight: 750; }
+.classEditorForm input, .classEditorForm select, .classEditorForm textarea { width: 100%; border: 1px solid #dcd2c7; border-radius: 10px; padding: 11px; background: #fff; font: inherit; }
+.editorWide, .editorActions { grid-column: 1 / -1; }
+.editorActions { display: flex; justify-content: flex-end; gap: 10px; padding-top: 6px; }
+@media (max-width: 640px) { .classEditorForm { grid-template-columns: 1fr; } .editorWide, .editorActions { grid-column: auto; } }

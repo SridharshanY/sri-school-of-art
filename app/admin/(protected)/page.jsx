@@ -1,4 +1,5 @@
 import AdminPortal from "@/components/AdminPortal";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata = {
   title: "Admin Portal",
@@ -9,7 +10,15 @@ export const metadata = {
   }
 };
 
-export default function AdminPage() {
-  return <AdminPortal />;
-}
+export const dynamic = "force-dynamic";
 
+export default async function AdminPage() {
+  const supabase = await createClient();
+  const { data: classes = [] } = await supabase
+    .from("classes")
+    .select("*")
+    .order("sort_order")
+    .order("created_at");
+
+  return <AdminPortal databaseClasses={classes} />;
+}

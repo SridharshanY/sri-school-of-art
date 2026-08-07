@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { createClass, deleteClass, updateClass } from "@/app/admin/(protected)/classes/actions";
 import {
   Bell,
   BookOpen,
@@ -306,11 +308,14 @@ function EmptyAction({ icon: Icon, title, text, action, onClick }) {
   );
 }
 
-export default function AdminPortal() {
+export default function AdminPortal({ databaseClasses = [] }) {
+  const router = useRouter();
+  const [isSaving, startSaving] = useTransition();
   const [activeView, setActiveView] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [classes, setClasses] = useState(initialClasses);
+  const [classes, setClasses] = useState(databaseClasses);
+  const [classEditor, setClassEditor] = useState(null);
   const [workshops, setWorkshops] = useState(initialWorkshops);
   const [registrations, setRegistrations] = useState(initialRegistrations);
   const [gallery, setGallery] = useState(galleryItems);
@@ -318,10 +323,12 @@ export default function AdminPortal() {
 
   const currentCopy = viewCopy[activeView];
 
+  useEffect(() => setClasses(databaseClasses), [databaseClasses]);
+
   const filteredClasses = useMemo(
     () =>
       classes.filter((item) =>
-        `${item.name} ${item.group} ${item.schedule}`
+        `${item.name} ${item.age_group} ${item.schedule_summary}`
           .toLowerCase()
           .includes(query.toLowerCase())
       ),
@@ -344,29 +351,13 @@ export default function AdminPortal() {
   }
 
   function changeView(id) {
-    if (id === "classes") {
-      window.location.assign("/admin/classes/");
-      return;
-    }
     setActiveView(id);
     setSidebarOpen(false);
     setQuery("");
   }
 
   function addClass() {
-    setClasses((items) => [
-      {
-        id: Date.now(),
-        name: "New creative course",
-        group: "Age group TBD",
-        schedule: "Timing TBD",
-        fee: "Fee TBD",
-        seats: "Draft",
-        state: "Draft"
-      },
-      ...items
-    ]);
-    notify("Draft class added for this demo session.");
+    setClassEditor({ status: "draft", mode: "offline" });
   }
 
   function toggleClass(id) {
@@ -382,6 +373,34 @@ export default function AdminPortal() {
       )
     );
     notify("Batch availability updated locally.");
+  }
+
+  function saveClass(formData) {
+    startSaving(async () => {
+      try {
+        await (classEditor.id ? updateClass(formData) : createClass(formData));
+        setClassEditor(null);
+        notify(classEditor.id ? "Class updated." : "Class created.");
+        router.refresh();
+      } catch (error) {
+        notify(error.message || "Could not save the class.");
+      }
+    });
+  }
+
+  function removeClass(item) {
+    if (!window.confirm(`Delete ${item.name}? This cannot be undone.`)) return;
+    const formData = new FormData();
+    formData.set("id", item.id);
+    startSaving(async () => {
+      try {
+        await deleteClass(formData);
+        notify("Class deleted.");
+        router.refresh();
+      } catch (error) {
+        notify(error.message || "Could not delete the class.");
+      }
+    });
   }
 
   function addWorkshop() {
@@ -594,11 +613,6 @@ export default function AdminPortal() {
           </button>
         </div>
         <div className={styles.tableWrap}>
-          <div style={{ padding: "0 0 18px" }}>
-            <Link className={styles.primaryButton} href="/admin/classes/">
-              Manage live Supabase classes <ExternalLink size={16} aria-hidden="true" />
-            </Link>
-          </div>
           <table className={styles.dataTable}>
             <thead>
               <tr>
@@ -617,13 +631,13 @@ export default function AdminPortal() {
                 <tr key={item.id}>
                   <td>
                     <strong>{item.name}</strong>
-                    <small>{item.group}</small>
+                    <small>{item.age_group}</small>
                   </td>
-                  <td>{item.schedule}</td>
-                  <td>{item.fee}</td>
-                  <td>{item.seats}</td>
+                  <td>{item.schedule_summary || "Not set"}</td>
+                  <td>{item.fee_label || (item.fee == null ? "Not set" : `₹${Number(item.fee).toLocaleString("en-IN")}`)}</td>
+                  <td>{item.available_seats == null ? "Not set" : `${item.available_seats} seats`}</td>
                   <td>
-                    <StatusPill state={item.state}>{item.state}</StatusPill>
+                    <StatusPill state={item.status}>{item.status}</StatusPill>
                   </td>
                   <td>
                     <div className={styles.rowActions}>
@@ -631,28 +645,15 @@ export default function AdminPortal() {
                         type="button"
                         className={styles.iconButton}
                         aria-label={`Edit ${item.name}`}
-                        onClick={() => notify("Edit form is a demo placeholder.")}
+                        onClick={() => setClassEditor(item)}
                       >
                         <Pencil size={16} aria-hidden="true" />
                       </button>
                       <button
                         type="button"
-                        className={styles.iconButton}
-                        aria-label={`Toggle availability for ${item.name}`}
-                        onClick={() => toggleClass(item.id)}
-                      >
-                        <Eye size={16} aria-hidden="true" />
-                      </button>
-                      <button
-                        type="button"
                         className={`${styles.iconButton} ${styles.dangerButton}`}
                         aria-label={`Delete ${item.name}`}
-                        onClick={() => {
-                          setClasses((items) =>
-                            items.filter((course) => course.id !== item.id)
-                          );
-                          notify("Class removed from this demo session.");
-                        }}
+                        onClick={() => removeClass(item)}
                       >
                         <Trash2 size={16} aria-hidden="true" />
                       </button>
@@ -662,6 +663,7 @@ export default function AdminPortal() {
               ))}
             </tbody>
           </table>
+          {!classes.length ? <p className={styles.inlineEmpty}>No classes yet. Add the first Supabase class above.</p> : null}
         </div>
       </section>
     );
@@ -1204,6 +1206,33 @@ export default function AdminPortal() {
         <div className={styles.toast} role="status">
           <Check size={17} aria-hidden="true" />
           {toast}
+        </div>
+      )}
+      {classEditor && (
+        <div className={styles.editorBackdrop} onMouseDown={() => setClassEditor(null)}>
+          <section className={styles.editorModal} role="dialog" aria-modal="true" aria-labelledby="class-editor-title" onMouseDown={(event) => event.stopPropagation()}>
+            <div className={styles.editorHeading}>
+              <div><p className={styles.kicker}>Supabase class</p><h2 id="class-editor-title">{classEditor.id ? "Edit class" : "Add class"}</h2></div>
+              <button type="button" className={styles.iconButton} onClick={() => setClassEditor(null)} aria-label="Close class editor"><X size={20} /></button>
+            </div>
+            <form action={saveClass} className={styles.classEditorForm}>
+              {classEditor.id ? <input type="hidden" name="id" value={classEditor.id} /> : null}
+              <label><span>Class name</span><input name="name" defaultValue={classEditor.name || ""} required /></label>
+              <label><span>Category</span><input name="category" defaultValue={classEditor.category || ""} required /></label>
+              <label><span>Age group</span><input name="age_group" defaultValue={classEditor.age_group || ""} required /></label>
+              <label><span>Skill level</span><input name="skill_level" defaultValue={classEditor.skill_level || "All levels"} /></label>
+              <label><span>Duration</span><input name="duration" defaultValue={classEditor.duration || ""} /></label>
+              <label><span>Schedule</span><input name="schedule_summary" defaultValue={classEditor.schedule_summary || ""} /></label>
+              <label><span>Fee (₹)</span><input name="fee" type="number" min="0" defaultValue={classEditor.fee ?? ""} /></label>
+              <label><span>Available seats</span><input name="available_seats" type="number" min="0" defaultValue={classEditor.available_seats ?? ""} /></label>
+              <label><span>Mode</span><select name="mode" defaultValue={classEditor.mode || "offline"}><option value="offline">Studio</option><option value="online">Online</option><option value="hybrid">Studio + online</option></select></label>
+              <label><span>Status</span><select name="status" defaultValue={classEditor.status || "draft"}><option value="draft">Draft</option><option value="published">Published</option><option value="archived">Archived</option></select></label>
+              <label className={styles.editorWide}><span>Materials</span><input name="materials" defaultValue={classEditor.materials || ""} /></label>
+              <label className={styles.editorWide}><span>Fee label</span><input name="fee_label" defaultValue={classEditor.fee_label || ""} placeholder="e.g. From ₹1,800 / month" /></label>
+              <label className={styles.editorWide}><span>Description</span><textarea name="description" rows="4" defaultValue={classEditor.description || ""} /></label>
+              <div className={styles.editorActions}><button type="button" className={styles.secondaryButton} onClick={() => setClassEditor(null)}>Cancel</button><button type="submit" className={styles.primaryButton} disabled={isSaving}>{isSaving ? "Saving…" : "Save class"}</button></div>
+            </form>
+          </section>
         </div>
       )}
     </div>

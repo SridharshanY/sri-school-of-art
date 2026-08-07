@@ -11,6 +11,7 @@ import {
 import PageHero from "@/components/PageHero";
 import SectionHeader from "@/components/SectionHeader";
 import CourseExplorer from "@/components/CourseExplorer";
+import { getPublishedClasses } from "@/lib/classes";
 
 export const metadata = {
   title: "Classes",
@@ -41,7 +42,10 @@ const programmes = [
   }
 ];
 
-export default function ClassesPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ClassesPage() {
+  const classes = await getPublishedClasses();
   return (
     <main id="main-content">
       <PageHero
@@ -68,7 +72,7 @@ export default function ClassesPage() {
               Preview fees & schedules
             </div>
           </div>
-          <CourseExplorer />
+          <CourseExplorer classes={classes} />
         </div>
       </section>
 

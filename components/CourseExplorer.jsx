@@ -3,12 +3,11 @@
 import { useMemo, useState } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import CourseCard from "@/components/CourseCard";
-import { classes } from "@/lib/data";
 
 const categories = ["All", "Drawing", "Painting", "Craft", "Special"];
 const ages = ["All ages", "Kids", "Teens", "Adults"];
 
-export default function CourseExplorer() {
+export default function CourseExplorer({ classes }) {
   const [category, setCategory] = useState("All");
   const [age, setAge] = useState("All ages");
 

@@ -590,6 +590,11 @@ export default function AdminPortal() {
           </button>
         </div>
         <div className={styles.tableWrap}>
+          <div style={{ padding: "0 0 18px" }}>
+            <Link className={styles.primaryButton} href="/admin/classes/">
+              Manage live Supabase classes <ExternalLink size={16} aria-hidden="true" />
+            </Link>
+          </div>
           <table className={styles.dataTable}>
             <thead>
               <tr>

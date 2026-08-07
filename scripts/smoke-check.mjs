@@ -210,9 +210,13 @@ await registrationPage.locator('[name="age"]').fill("12");
 await registrationPage.locator('[name="guardianName"]').fill("Test Parent");
 await registrationPage.locator('[name="phone"]').fill("9876543210");
 await registrationPage.locator('[name="email"]').fill("test@example.com");
-await registrationPage
-  .locator('[name="selectedClass"]')
-  .selectOption({ label: "Drawing Foundations" });
+const selectedClassValue = await registrationPage
+  .locator('[name="selectedClass"] option')
+  .evaluateAll((options) =>
+    options.find((option) => option.value && !option.value.startsWith("Workshop:"))
+      ?.value || "Not sure yet"
+  );
+await registrationPage.locator('[name="selectedClass"]').selectOption(selectedClassValue);
 await registrationPage
   .locator('[name="preferredBatch"]')
   .selectOption({ label: "Saturday morning" });

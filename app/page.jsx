@@ -24,9 +24,9 @@ import EventCard from "@/components/EventCard";
 import GalleryGrid from "@/components/GalleryGrid";
 import GoogleMapEmbed from "@/components/GoogleMapEmbed";
 import TrialForm from "@/components/TrialForm";
+import { getPublishedClasses } from "@/lib/classes";
 import {
   classCategories,
-  classes,
   events,
   testimonials
 } from "@/lib/data";
@@ -61,7 +61,10 @@ const reasons = [
   }
 ];
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const classes = await getPublishedClasses();
   return (
     <main id="main-content">
       <section className="home-hero">
@@ -260,10 +263,12 @@ export default function HomePage() {
               <CourseCard course={course} compact key={course.id} />
             ))}
           </div>
-          <p className="content-disclaimer">
-            Preview schedules and fees are shown for layout. Please confirm
-            current batches before publishing.
-          </p>
+          {!classes.length ? (
+            <div className="empty-state">
+              <h3>No classes are currently published.</h3>
+              <p>Please check back soon or contact us for the latest batches.</p>
+            </div>
+          ) : null}
         </div>
       </section>
 

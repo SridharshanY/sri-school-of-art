@@ -10,6 +10,7 @@ import {
 import PageHero from "@/components/PageHero";
 import TrialForm from "@/components/TrialForm";
 import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/contact";
+import { getPublishedClasses } from "@/lib/classes";
 
 export const metadata = {
   title: "Registration",
@@ -17,7 +18,10 @@ export const metadata = {
     "Request a trial class or register your interest in an art class or workshop at Sri School of Art."
 };
 
-export default function RegistrationPage() {
+export const dynamic = "force-dynamic";
+
+export default async function RegistrationPage() {
+  const classes = await getPublishedClasses();
   return (
     <main id="main-content">
       <PageHero
@@ -95,7 +99,7 @@ export default function RegistrationPage() {
                 <h2>Request a class</h2>
               </div>
             </div>
-            <TrialForm variant="full" />
+            <TrialForm variant="full" classOptions={classes} />
             <div className="privacy-line">
               <Check size={16} aria-hidden="true" />
               Form data should be connected to the school’s secure email or

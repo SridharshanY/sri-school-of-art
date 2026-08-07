@@ -37,7 +37,7 @@ import styles from "@/app/admin/admin.module.css";
 
 const navigation = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "classes", label: "Classes", icon: BookOpen, count: 6 },
+  { id: "classes", label: "Classes", icon: BookOpen },
   { id: "workshops", label: "Workshops", icon: CalendarDays, count: 3 },
   { id: "gallery", label: "Gallery", icon: Image, count: 24 },
   { id: "registrations", label: "Registrations", icon: FileText, count: 12 },
@@ -344,6 +344,10 @@ export default function AdminPortal() {
   }
 
   function changeView(id) {
+    if (id === "classes") {
+      window.location.assign("/admin/classes/");
+      return;
+    }
     setActiveView(id);
     setSidebarOpen(false);
     setQuery("");

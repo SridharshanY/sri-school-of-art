@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2, MessageCircle } from "lucide-react";
-import { classes, events } from "@/lib/data";
+import { events } from "@/lib/data";
 import { createWhatsAppUrl } from "@/lib/contact";
 
 const initialShort = {
@@ -26,7 +26,7 @@ const initialFull = {
   message: ""
 };
 
-export default function TrialForm({ variant = "short" }) {
+export default function TrialForm({ variant = "short", classOptions = [] }) {
   const full = variant === "full";
   const [values, setValues] = useState(full ? initialFull : initialShort);
   const [submitted, setSubmitted] = useState(false);
@@ -37,7 +37,7 @@ export default function TrialForm({ variant = "short" }) {
     const classId = search.get("class");
     const workshopId = search.get("workshop");
     if (classId) {
-      const match = classes.find((item) => item.id === classId);
+      const match = classOptions.find((item) => item.id === classId);
       if (match) {
         setValues((current) => ({
           ...current,
@@ -53,7 +53,7 @@ export default function TrialForm({ variant = "short" }) {
         }));
       }
     }
-  }, [full]);
+  }, [full, classOptions]);
 
   function update(event) {
     setValues((current) => ({
@@ -198,7 +198,7 @@ export default function TrialForm({ variant = "short" }) {
                 required
               >
                 <option value="">Choose a class</option>
-                {classes.map((course) => (
+                {classOptions.map((course) => (
                   <option value={course.title} key={course.id}>
                     {course.title}
                   </option>

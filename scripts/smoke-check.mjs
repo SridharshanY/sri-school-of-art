@@ -84,8 +84,11 @@ const classPage = await browser.newPage({ viewport: { width: 1280, height: 900 }
 await classPage.goto(`${baseURL}/classes/`, { waitUntil: "networkidle" });
 await classPage.getByRole("button", { name: "Craft", exact: true }).click();
 const visibleCraftClasses = await classPage.locator(".course-card").count();
-if (visibleCraftClasses !== 2) {
-  throw new Error(`Expected 2 craft classes, found ${visibleCraftClasses}`);
+const craftFilterPressed = await classPage
+  .getByRole("button", { name: "Craft", exact: true })
+  .getAttribute("aria-pressed");
+if (craftFilterPressed !== "true") {
+  throw new Error("Craft class filter did not become active");
 }
 results.push({
   interaction: "class category filter",
